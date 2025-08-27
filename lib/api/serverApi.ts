@@ -68,7 +68,7 @@ export const getServerMe = async () => {
       Cookie: cookieStore.toString(),
     },
   });
-  return res;
+  return res.data;
 };
 
 export const editServerMe = async (editedData: EditedData) => {
@@ -78,5 +78,5 @@ export const editServerMe = async (editedData: EditedData) => {
       Cookie: cookieStore.toString(),
     },
   });
-  return res;
+  return res.data;
 };

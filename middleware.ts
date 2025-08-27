@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { parse } from "cookie";
 import { checkServerSession } from "./lib/api/serverApi";
 
-const privateRoutes = ["/profile"];
+const privateRoutes = ["/profile", "/notes", "/notes/filter"];
 const publicRoutes = ["/sign-in", "/sign-up"];
 
 export async function middleware(request: NextRequest) {
@@ -40,7 +40,7 @@ export async function middleware(request: NextRequest) {
           if (parsed.refreshToken)
             cookieStore.set("refreshToken", parsed.refreshToken, options);
         }
-        // Якщо сесія все ще активна:
+        // Якщо після оновлення сесія активна:
         // для публічного маршруту — виконуємо редірект на головну.
         if (isPublicRoute) {
           return NextResponse.redirect(new URL("/", request.url), {
@@ -69,9 +69,29 @@ export async function middleware(request: NextRequest) {
     if (isPrivateRoute) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
+    return NextResponse.next();
   }
+
+  //Якщо accessToken існує (користувач автентифікований)
+  if (isPublicRoute) {
+    // не пускаємо на sign-in/sign-up → редірект на головну
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+  if (isPrivateRoute) {
+    return NextResponse.next({
+      headers: { Cookie: cookieStore.toString() },
+    });
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/sign-in", "/sign-up"],
+  matcher: [
+    "/profile/:path*",
+    "/notes/:path*",
+    "/notes/filter/:path*",
+    "/sign-in",
+    "/sign-up",
+  ],
 };

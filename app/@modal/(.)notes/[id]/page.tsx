@@ -1,5 +1,5 @@
 import NoteDetailsPageClient from "./NotePreview.client";
-import { getSingleNote } from "@/lib/api/clientApi";
+import { getServerSingleNote } from "@/lib/api/serverApi";
 import {
   dehydrate,
   HydrationBoundary,
@@ -17,7 +17,7 @@ const NotePreview = async ({ params }: Props) => {
 
   await queryClient.prefetchQuery({
     queryKey: ["note", id],
-    queryFn: () => getSingleNote(id),
+    queryFn: () => getServerSingleNote(id),
   });
 
   return (

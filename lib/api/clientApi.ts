@@ -78,6 +78,7 @@ export const getMe = async () => {
 export interface EditedData {
   email: string;
   username: string;
+  avatar: string;
 }
 
 export const editMe = async (editedData: EditedData) => {

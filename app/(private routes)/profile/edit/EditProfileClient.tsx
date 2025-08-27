@@ -17,7 +17,9 @@ interface Props {
 export default function EditProfileClient({ user }: Props) {
   const router = useRouter();
   const [username, setUsername] = useState(user.username);
+  const [avatar, setAvatar] = useState(user.avatar);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -29,9 +31,11 @@ export default function EditProfileClient({ user }: Props) {
       const response = await editMe({
         email: user.email,
         username,
+        avatar,
       });
       if (response) {
         setUsername(response.username);
+        setAvatar(response.avatar);
         router.push("/profile");
       }
     } catch (error: unknown) {
@@ -40,6 +44,8 @@ export default function EditProfileClient({ user }: Props) {
       } else {
         setError("Unexpected error");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -49,7 +55,7 @@ export default function EditProfileClient({ user }: Props) {
         <h1 className={css.formTitle}>Edit Profile</h1>
 
         <Image
-          src={user.avatar}
+          src={avatar}
           alt="User Avatar"
           width={120}
           height={120}
@@ -73,10 +79,18 @@ export default function EditProfileClient({ user }: Props) {
           {error && <p className={css.error}>{error}</p>}
 
           <div className={css.actions}>
-            <button type="submit" className={css.saveButton}>
-              Save
+            <button
+              type="submit"
+              className={css.saveButton}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save"}
             </button>
-            <button type="button" className={css.cancelButton}>
+            <button
+              type="button"
+              className={css.cancelButton}
+              onClick={() => router.push("/profile")}
+            >
               Cancel
             </button>
           </div>
