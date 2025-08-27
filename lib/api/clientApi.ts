@@ -84,3 +84,8 @@ export const editMe = async (editedData: EditedData) => {
   const { data } = await nextServer.patch<User>(`/users/me`, editedData);
   return data;
 };
+
+export const checkSession = async () => {
+  const { data } = await nextServer.get<CheckSessionResponse>(`/auth/session`);
+  return data.success;
+};

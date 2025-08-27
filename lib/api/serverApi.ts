@@ -1,6 +1,10 @@
 import { cookies } from "next/headers";
 import { nextServer } from "./api";
-import { EditedData, FetchNotesResponse } from "./clientApi";
+import {
+  CheckSessionResponse,
+  EditedData,
+  FetchNotesResponse,
+} from "./clientApi";
 import { Note } from "@/types/note";
 import { User } from "@/types/user";
 
@@ -36,7 +40,7 @@ export const fetchNotes = async (
 export const checkServerSession = async () => {
   // Дістаємо поточні cookie
   const cookieStore = await cookies();
-  const res = await nextServer.get("/auth/session", {
+  const res = await nextServer.get<CheckSessionResponse>("/auth/session", {
     headers: {
       // передаємо кукі далі
       Cookie: cookieStore.toString(),
