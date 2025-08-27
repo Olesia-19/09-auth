@@ -74,6 +74,15 @@ export default function EditProfileClient({ user }: Props) {
             />
           </div>
 
+          <label htmlFor="avatar">Avatar URL:</label>
+          <input
+            id="avatar"
+            type="text"
+            className={css.input}
+            value={avatar}
+            onChange={(e) => setAvatar(e.target.value)}
+          />
+
           <p>Email: {user.email}</p>
 
           {error && <p className={css.error}>{error}</p>}
