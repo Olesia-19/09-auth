@@ -5,6 +5,7 @@ import { editMe } from "@/lib/api/clientApi";
 import Image from "next/image";
 import { useState } from "react";
 import axios from "axios";
+import { useAuthStore } from "@/lib/store/authStore";
 
 interface Props {
   user: {
@@ -16,6 +17,8 @@ interface Props {
 
 export default function EditProfileClient({ user }: Props) {
   const router = useRouter();
+  const updateUser = useAuthStore((state) => state.setUser);
+
   const [username, setUsername] = useState(user.username);
   const [avatar, setAvatar] = useState(user.avatar);
   const [error, setError] = useState<string | null>(null);
@@ -27,15 +30,20 @@ export default function EditProfileClient({ user }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
     try {
       const response = await editMe({
         email: user.email,
         username,
         avatar,
       });
+
       if (response) {
         setUsername(response.username);
         setAvatar(response.avatar);
+        updateUser(response);
         router.push("/profile");
       }
     } catch (error: unknown) {
